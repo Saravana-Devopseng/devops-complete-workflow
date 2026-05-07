@@ -1,0 +1,45 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Display repository info
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Author: ${{ github.actor }}"
+      
+      - name: List project files
+        run: ls -la
+      
+      - name: Check Dockerfile
+        run: |
+          if [ -f Dockerfile ]; then
+            echo "✅ Dockerfile found!"
+            cat Dockerfile
+          else
+            echo "❌ Dockerfile not found!"
+          fi
+      
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build -t devops-app:latest .
+          echo "✅ Docker image built successfully!"
+      
+      - name: List Docker images
+        run: docker images | grep devops-app
+      
+      - name: Workflow completed
+        run: echo "🎉 All steps completed successfully!"
